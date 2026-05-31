@@ -1,0 +1,29 @@
+.heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+}
+
+.heading--sm {
+  font-size: var(--text-xl);
+}
+
+.heading--md {
+  font-size: var(--text-2xl);
+}
+
+.heading--lg {
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+}
+
+.heading--xl {
+  font-size: clamp(var(--text-3xl), 6vw, var(--text-5xl));
+}
+
+.heading--gradient {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

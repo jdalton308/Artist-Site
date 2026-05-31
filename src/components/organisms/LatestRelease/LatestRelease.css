@@ -1,0 +1,39 @@
+.latest-release {
+  background: var(--color-bg-secondary);
+}
+
+.latest-release__grid {
+  display: grid;
+  gap: var(--space-2xl);
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .latest-release__grid {
+    grid-template-columns: 320px 1fr;
+  }
+}
+
+.latest-release__cover-link {
+  display: block;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.latest-release__cover-link:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-glow);
+}
+
+.latest-release__cover {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.latest-release__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}

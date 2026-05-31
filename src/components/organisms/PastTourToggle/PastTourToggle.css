@@ -1,0 +1,27 @@
+.past-tour-toggle__controls {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-2xl);
+  padding: var(--space-xs);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-full);
+  width: fit-content;
+}
+
+.past-tour-toggle__btn {
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-full);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.past-tour-toggle__btn:hover {
+  color: var(--color-text-primary);
+}
+
+.past-tour-toggle__btn--active {
+  background: var(--gradient-hero);
+  color: var(--color-text-primary);
+}

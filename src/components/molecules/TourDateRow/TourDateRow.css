@@ -1,0 +1,57 @@
+.tour-date-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+@media (min-width: 640px) {
+  .tour-date-row {
+    grid-template-columns: 10rem 1fr auto;
+    align-items: center;
+  }
+}
+
+.tour-date-row:hover {
+  border-color: var(--color-border-accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.tour-date-row--past {
+  opacity: 0.6;
+}
+
+.tour-date-row__date {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+  letter-spacing: 0.02em;
+}
+
+.tour-date-row__city {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+}
+
+.tour-date-row__venue {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.tour-date-row__action {
+  display: flex;
+  justify-content: flex-start;
+}
+
+@media (min-width: 640px) {
+  .tour-date-row__action {
+    justify-content: flex-end;
+  }
+}

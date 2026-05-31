@@ -1,0 +1,11 @@
+.upcoming-shows__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+.upcoming-shows__cta {
+  display: flex;
+  justify-content: center;
+}
