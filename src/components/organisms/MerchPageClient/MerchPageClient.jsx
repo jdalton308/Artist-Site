@@ -50,11 +50,11 @@ export default function MerchPageClient({ pageContent, products = [] }) {
 
     try {
       const lines = cartItems.map((item) => ({
-        merchandiseId: item.variantId,
+        productId: item.variantId,
         quantity: item.quantity,
       }));
 
-      const response = await fetch("/api/shopify/checkout", {
+      const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lines }),
@@ -64,6 +64,8 @@ export default function MerchPageClient({ pageContent, products = [] }) {
 
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
+      } else if (data.isMock) {
+        alert("Checkout is not configured yet. Add Stripe keys and Payload credentials to enable payments.");
       }
     } catch (error) {
       console.error("Checkout failed:", error);

@@ -1,7 +1,7 @@
 import Heading from "@/components/atoms/Heading/Heading";
 import Text from "@/components/atoms/Text/Text";
 import PastTourToggle from "@/components/organisms/PastTourToggle/PastTourToggle";
-import { getTourDates } from "@/lib/contentful/queries";
+import { getTourDates } from "@/lib/payload/queries";
 export const revalidate = 3600;
 
 export const metadata = {

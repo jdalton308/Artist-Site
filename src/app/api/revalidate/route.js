@@ -2,21 +2,22 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 const ROUTE_MAP = {
-  artistSettings: ["/", "/live", "/music", "/about", "/merch"],
-  homePage: ["/"],
-  tourDate: ["/", "/live"],
-  release: ["/", "/music"],
-  aboutPage: ["/about"],
-  merchPage: ["/merch"],
-  socialLink: ["/"],
+  "artist-settings": ["/", "/live", "/music", "/about", "/merch"],
+  "home-page": ["/"],
+  "tour-dates": ["/", "/live"],
+  releases: ["/", "/music"],
+  "about-page": ["/about"],
+  "merch-page": ["/merch"],
+  products: ["/merch"],
+  "social-links": ["/"],
 };
 
 export async function POST(request) {
-  const secret = process.env.CONTENTFUL_REVALIDATE_SECRET;
+  const secret = process.env.PAYLOAD_REVALIDATE_SECRET;
 
   if (!secret) {
     return NextResponse.json(
-      { message: "CONTENTFUL_REVALIDATE_SECRET is not configured" },
+      { message: "PAYLOAD_REVALIDATE_SECRET is not configured" },
       { status: 500 },
     );
   }
@@ -26,16 +27,16 @@ export async function POST(request) {
     return NextResponse.json({ message: "Invalid secret" }, { status: 401 });
   }
 
-  let contentType;
+  let collection;
 
   try {
     const body = await request.json();
-    contentType = body.sys?.contentType?.sys?.id;
+    collection = body.collection || body.global;
   } catch {
-    // Contentful may send non-JSON payloads for test webhooks.
+    // Payload may send non-JSON payloads for test webhooks.
   }
 
-  const paths = ROUTE_MAP[contentType] ?? ["/", "/live", "/music", "/about", "/merch"];
+  const paths = ROUTE_MAP[collection] ?? ["/", "/live", "/music", "/about", "/merch"];
 
   for (const path of paths) {
     revalidatePath(path);
@@ -43,7 +44,7 @@ export async function POST(request) {
 
   return NextResponse.json({
     revalidated: true,
-    contentType: contentType ?? "unknown",
+    collection: collection ?? "unknown",
     paths,
   });
 }

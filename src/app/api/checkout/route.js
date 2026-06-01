@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createCheckoutCart } from "@/lib/shopify/client";
+import { createCheckoutCart } from "@/lib/payload/checkout";
 
 export async function POST(request) {
   try {

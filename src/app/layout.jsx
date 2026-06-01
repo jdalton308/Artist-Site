@@ -1,6 +1,6 @@
 import SiteHeader from "@/components/organisms/SiteHeader/SiteHeader";
 import SiteFooter from "@/components/organisms/SiteFooter/SiteFooter";
-import { getArtistSettings } from "@/lib/contentful/queries";
+import { getArtistSettings } from "@/lib/payload/queries";
 import "./globals.css";
 
 export const metadata = {

@@ -15,9 +15,12 @@ export const mockLatestRelease = {
   title: "Afterglow EP",
   releaseDate: "2025-11-14",
   year: 2025,
-  coverArtUrl: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&h=600&fit=crop",
-  embedUrl: "https://open.spotify.com/embed/album/4uLU6hMCjMI75M1A2tKUQC?utm_source=generator",
-  description: "Four tracks of late-night energy — pulsing basslines, shimmering synths, and warehouse-ready grooves.",
+  coverArtUrl:
+    "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&h=600&fit=crop",
+  embedUrl:
+    "https://open.spotify.com/embed/album/4uLU6hMCjMI75M1A2tKUQC?utm_source=generator",
+  description:
+    "Four tracks of late-night energy — pulsing basslines, shimmering synths, and warehouse-ready grooves.",
   streamingLinks: {
     spotify: "https://open.spotify.com",
     apple: "https://music.apple.com",
@@ -34,9 +37,11 @@ export const mockReleases = [
     title: "Midnight Circuit",
     releaseDate: "2025-03-22",
     year: 2025,
-    coverArtUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&h=600&fit=crop",
+    coverArtUrl:
+      "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&h=600&fit=crop",
     embedUrl: null,
-    description: "A single built for peak-time — relentless four-on-the-floor with a hypnotic vocal chop.",
+    description:
+      "A single built for peak-time — relentless four-on-the-floor with a hypnotic vocal chop.",
     streamingLinks: {
       spotify: "https://open.spotify.com",
       apple: "https://music.apple.com",
@@ -48,7 +53,8 @@ export const mockReleases = [
     title: "Signal Lost",
     releaseDate: "2024-09-01",
     year: 2024,
-    coverArtUrl: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=600&fit=crop",
+    coverArtUrl:
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=600&fit=crop",
     embedUrl: null,
     description: "Debut EP — raw, unfiltered club music recorded between Berlin and Brooklyn.",
     streamingLinks: {
@@ -146,7 +152,8 @@ export const mockTourDates = [
 export const mockHomePage = {
   heroHeadline: "NEON PULSE",
   heroSubheadline: "Touring the world. Pushing the sound forward.",
-  heroImageUrl: "https://images.unsplash.com/photo-1571266028243-e68f8570c9e0?w=1600&h=900&fit=crop",
+  heroImageUrl:
+    "https://images.unsplash.com/photo-1571266028243-e68f8570c9e0?w=1600&h=900&fit=crop",
   heroCtaLabel: "Latest Release",
   heroCtaUrl: "/music",
   latestRelease: mockLatestRelease,

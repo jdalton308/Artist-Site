@@ -1,7 +1,7 @@
 import Hero from "@/components/organisms/Hero/Hero";
 import LatestRelease from "@/components/organisms/LatestRelease/LatestRelease";
 import UpcomingShows from "@/components/organisms/UpcomingShows/UpcomingShows";
-import { getHomePageData } from "@/lib/contentful/queries";
+import { getHomePageData } from "@/lib/payload/queries";
 export const revalidate = 3600;
 
 export default async function HomePage() {

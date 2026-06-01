@@ -1,5 +1,5 @@
 import AboutSection from "@/components/organisms/AboutSection/AboutSection";
-import { getAboutPage } from "@/lib/contentful/queries";
+import { getAboutPage } from "@/lib/payload/queries";
 export const revalidate = 3600;
 
 export const metadata = {

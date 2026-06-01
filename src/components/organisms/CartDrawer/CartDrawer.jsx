@@ -66,10 +66,10 @@ export default function CartDrawer({
               disabled={isCheckingOut}
               className="cart-drawer__checkout"
             >
-              {isCheckingOut ? "Redirecting…" : "Checkout with Shopify"}
+              {isCheckingOut ? "Processing…" : "Checkout"}
             </Button>
             <p className="cart-drawer__note">
-              You&apos;ll be redirected to Shopify to complete your purchase.
+              Complete your purchase securely via Payload and Stripe.
             </p>
           </div>
         )}

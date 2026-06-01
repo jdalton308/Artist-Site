@@ -1,7 +1,7 @@
 import Heading from "@/components/atoms/Heading/Heading";
 import Text from "@/components/atoms/Text/Text";
 import ReleaseGrid from "@/components/organisms/ReleaseGrid/ReleaseGrid";
-import { getReleases } from "@/lib/contentful/queries";
+import { getReleases } from "@/lib/payload/queries";
 export const revalidate = 3600;
 
 export const metadata = {

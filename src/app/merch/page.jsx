@@ -1,6 +1,5 @@
 import MerchPageClient from "@/components/organisms/MerchPageClient/MerchPageClient";
-import { getMerchPage } from "@/lib/contentful/queries";
-import { getProducts } from "@/lib/shopify/client";
+import { getMerchPage, getProducts } from "@/lib/payload/queries";
 export const revalidate = 3600;
 
 export const metadata = {

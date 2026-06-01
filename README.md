@@ -1,8 +1,8 @@
 # Artist Site
 
-A white-label website for a touring DJ artist or band. Built with **Next.js**, deployed on **Vercel**, with **Contentful** for content management and **Shopify Storefront API** for merch.
+A white-label website for a touring DJ artist or band. Built with **Next.js**, deployed on **Vercel**, with **Payload CMS** for content management and e-commerce.
 
-The placeholder artist **NEON PULSE** ships with mock data so you can preview the site immediately — no CMS or Shopify credentials required for local development.
+The placeholder artist **NEON PULSE** ships with mock data so you can preview the site immediately — no database credentials required for local development.
 
 ---
 
@@ -12,9 +12,10 @@ The placeholder artist **NEON PULSE** ships with mock data so you can preview th
 - **Tour dates** — upcoming shows on the home page, full list on `/live` with a past-dates toggle
 - **Music catalog** — releases with embedded players and streaming platform links
 - **About page** — copy-heavy bio with photos, label, sound, and vision sections
-- **Merch shop** — Shopify-powered cart with checkout redirect (placeholder products when Shopify is not configured)
+- **Merch shop** — Payload-powered product catalog with cart and Stripe checkout
 - **Social links** — Instagram, TikTok, and more in the header and footer
-- **ISR pre-rendering** — static pages with 1-hour revalidation, plus Contentful webhooks for on-demand updates
+- **ISR pre-rendering** — static pages with 1-hour revalidation, plus Payload hooks for on-demand updates
+- **GraphQL API** — all frontend content fetched via Payload's GraphQL endpoint
 
 ---
 
@@ -26,7 +27,8 @@ The placeholder artist **NEON PULSE** ships with mock data so you can preview th
 | `/live` | Full list of future tour dates with ticket links; toggle to show past dates |
 | `/music` | All releases with embedded players and links to Spotify, Apple Music, YouTube Music, Tidal, Bandcamp |
 | `/about` | Artist bio, photos, label, sound description, and goals |
-| `/merch` | Product grid, cart drawer, and Shopify checkout redirect |
+| `/merch` | Product grid, cart drawer, and checkout |
+| `/admin` | Payload CMS admin panel |
 
 All content routes are pre-rendered with ISR (`revalidate: 3600`).
 
@@ -37,8 +39,9 @@ All content routes are pre-rendered with ISR (`revalidate: 3600`).
 - **Next.js 16** (App Router) — vanilla JavaScript, no TypeScript
 - **React 19**
 - **Vanilla CSS** — token-based design system using CSS custom properties (no Tailwind)
-- **Contentful** — headless CMS for all editorial content
-- **Shopify Storefront API** — headless commerce for the merch page
+- **Payload CMS 3** — headless CMS with admin panel, MongoDB, and GraphQL API
+- **Payload Ecommerce Plugin** — products, carts, orders, and Stripe payments
+- **MongoDB** — non-relational database via `@payloadcms/db-mongodb`
 - **Vercel** — deployment target
 
 ---
@@ -55,16 +58,21 @@ src/
 │   ├── about/page.jsx
 │   ├── merch/page.jsx
 │   ├── globals.css             # Design tokens + base styles
+│   ├── (payload)/              # Payload admin + API routes
+│   │   ├── admin/
+│   │   └── api/graphql/        # GraphQL endpoint
 │   └── api/
-│       ├── revalidate/route.js # Contentful webhook handler
-│       └── shopify/checkout/route.js
+│       ├── revalidate/route.js # On-demand ISR webhook
+│       └── checkout/route.js   # Cart checkout handler
+├── collections/                # Payload collections
+├── globals/                    # Payload globals (singletons)
+├── payload.config.js           # Payload CMS configuration
 ├── components/
 │   ├── atoms/                  # Button, Heading, Text, Icon, Badge, GradientBackground
 │   ├── molecules/              # SocialLinks, NavLink, TourDateRow, ReleaseCard, etc.
 │   └── organisms/              # SiteHeader, SiteFooter, Hero, CartDrawer, etc.
 └── lib/
-    ├── contentful/             # Client, queries, mappers, mock data
-    └── shopify/                # Storefront API client + placeholder products
+    └── payload/                # GraphQL client, queries, mappers, mock data
 ```
 
 Components follow an **atoms → molecules → organisms** hierarchy. Each component has its own co-located CSS file that references semantic design tokens.
@@ -76,6 +84,7 @@ Components follow an **atoms → molecules → organisms** hierarchy. Each compo
 ### Prerequisites
 
 - Node.js 18+
+- MongoDB (local or Atlas)
 - npm (or yarn/pnpm)
 
 ### Install and run
@@ -83,10 +92,14 @@ Components follow an **atoms → molecules → organisms** hierarchy. Each compo
 ```bash
 cd artist-site
 npm install
+cp .env.example .env.local
+# Edit .env.local with your MongoDB URI and Payload secret
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to preview the site with mock data.
+Open [http://localhost:3000](http://localhost:3000) to preview the site.
+
+Without MongoDB configured, the site uses mock data automatically.
 
 ### Build for production
 
@@ -107,84 +120,77 @@ cp .env.example .env.local
 
 | Variable | Required | Description |
 |---|---|---|
-| `CONTENTFUL_SPACE_ID` | For CMS | Contentful space ID |
-| `CONTENTFUL_ACCESS_TOKEN` | For CMS | Contentful Delivery API token |
-| `CONTENTFUL_REVALIDATE_SECRET` | For webhooks | Random secret for the revalidation endpoint |
-| `SHOPIFY_STORE_DOMAIN` | For merch | e.g. `your-store.myshopify.com` |
-| `SHOPIFY_STOREFRONT_ACCESS_TOKEN` | For merch | Shopify Storefront API access token |
-| `NEXT_PUBLIC_SITE_URL` | Optional | Site URL for absolute links |
+| `MONGODB_URI` | For CMS | MongoDB connection string |
+| `PAYLOAD_SECRET` | For CMS | Random secret for Payload auth/tokens |
+| `PAYLOAD_REVALIDATE_SECRET` | For webhooks | Random secret for the revalidation endpoint |
+| `STRIPE_SECRET_KEY` | For checkout | Stripe secret key |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | For checkout | Stripe publishable key |
+| `STRIPE_WEBHOOKS_SIGNING_SECRET` | For checkout | Stripe webhook signing secret |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Site URL for GraphQL client and checkout redirects |
 
-**Without Contentful credentials**, the site falls back to mock data in `src/lib/contentful/mock-data.js`.
+**Without Payload credentials**, the site falls back to mock data in `src/lib/payload/mock-data.js`.
 
-**Without Shopify credentials**, the merch page uses two placeholder products and redirects checkout to a stub URL.
-
----
-
-## Contentful Setup
-
-### 1. Create content models
-
-Follow the field definitions in [`CONTENTFUL_MODELS.md`](./CONTENTFUL_MODELS.md). The content types are:
-
-| Content type | Maps to |
-|---|---|
-| `artistSettings` (singleton) | Header, footer, layout |
-| `socialLink` | SocialLinks component |
-| `homePage` (singleton) | `/` home page |
-| `tourDate` | `/`, `/live`, TourDateRow |
-| `release` | `/`, `/music`, ReleaseCard |
-| `aboutPage` (singleton) | `/about` |
-| `merchPage` (singleton) | `/merch` page copy (products come from Shopify) |
-
-### 2. Add content
-
-Create and publish entries for each singleton and add tour dates, releases, and social links.
-
-### 3. Configure webhook
-
-In Contentful: **Settings → Webhooks → Add webhook**
-
-- **URL:** `https://YOUR_DOMAIN.vercel.app/api/revalidate?secret=YOUR_SECRET`
-- **Triggers:** Entry publish, Entry unpublish
-- **Content types:** All (or select the types listed above)
-
-Set `CONTENTFUL_REVALIDATE_SECRET` in Vercel to match the `secret` query parameter.
-
-When content is published, the webhook revalidates the affected routes:
-
-| Content type | Routes revalidated |
-|---|---|
-| `artistSettings` | All pages |
-| `homePage` | `/` |
-| `tourDate` | `/`, `/live` |
-| `release` | `/`, `/music` |
-| `aboutPage` | `/about` |
-| `merchPage` | `/merch` |
+**Without Stripe credentials**, the merch page uses placeholder products and shows a checkout message instead of processing payments.
 
 ---
 
-## Shopify Setup
+## Payload CMS Setup
 
-### 1. Create a custom app
+### 1. Start MongoDB
 
-In your Shopify admin: **Settings → Apps and sales channels → Develop apps**
+Use a local MongoDB instance or MongoDB Atlas:
 
-Create a custom app with **Storefront API** access scopes.
+```bash
+# Local example
+MONGODB_URI=mongodb://127.0.0.1:27017/artist-site
+```
 
-### 2. Install and get token
+### 2. Configure environment
 
-Install the app on your store and copy the **Storefront API access token**.
+Set `MONGODB_URI`, `PAYLOAD_SECRET`, and `NEXT_PUBLIC_SITE_URL` in `.env.local`.
 
-### 3. Add products
+### 3. Create an admin user
 
-Add products in Shopify admin. The merch page fetches them via the Storefront API. When credentials are missing, two placeholder products are shown instead.
+On first visit to [http://localhost:3000/admin](http://localhost:3000/admin), Payload prompts you to create an admin account.
 
-### 4. Checkout flow
+### 4. Add content
+
+Follow the field definitions in [`PAYLOAD_MODELS.md`](./PAYLOAD_MODELS.md). Create globals for site settings and pages, then add tour dates, releases, and products.
+
+### 5. GraphQL API
+
+Payload's GraphQL endpoint is available at `/api/graphql`. The playground is at `/api/graphql-playground` in development.
+
+Frontend queries live in `src/lib/payload/queries.js`.
+
+### 6. Revalidation
+
+Publishing content triggers automatic revalidation via Payload hooks. You can also POST to the webhook endpoint:
+
+```
+POST https://YOUR_DOMAIN/api/revalidate?secret=YOUR_SECRET
+{ "collection": "tour-dates" }
+```
+
+---
+
+## E-commerce Setup
+
+Products are managed in Payload admin under the **Products** collection (via the ecommerce plugin).
+
+### Stripe checkout
+
+1. Create a Stripe account and get API keys
+2. Set `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` in `.env.local`
+3. Add products in Payload admin with prices in cents (e.g. `3500` = $35.00)
+4. Publish products — only published products appear on `/merch`
+
+### Checkout flow
 
 1. User adds items to cart on `/merch`
 2. Cart state is managed client-side
-3. **Checkout** calls `/api/shopify/checkout` which creates a Shopify cart
-4. User is redirected to `cart.checkoutUrl` (Shopify-hosted checkout)
+3. **Checkout** calls `/api/checkout` which creates a Payload cart
+4. With Stripe configured, user is redirected to complete payment
 
 ---
 
@@ -205,10 +211,9 @@ Fonts: **Syne** (display) and **Inter** (body), loaded via Google Fonts.
 
 To rebrand for a different artist:
 
-1. **Content** — update or replace Contentful entries (or edit mock data for local dev)
+1. **Content** — update Payload globals and collections (or edit mock data for local dev)
 2. **Colors** — swap raw palette values in `:root` in `globals.css`
 3. **Metadata** — update `title` and `description` in `src/app/layout.jsx`
-4. **Per-artist deployment** — duplicate the Contentful space or use one space with an `artistSlug` filter
 
 ---
 
@@ -217,7 +222,8 @@ To rebrand for a different artist:
 1. Push the repo to GitHub (or connect your Git provider)
 2. Import the project in [Vercel](https://vercel.com/new)
 3. Add all environment variables from `.env.example`
-4. Deploy — static pages are generated at build time and refreshed via Contentful webhooks on publish
+4. Provision MongoDB (e.g. MongoDB Atlas) and set `MONGODB_URI`
+5. Deploy — static pages are generated at build time and refreshed via Payload hooks on publish
 
 ```bash
 # Or deploy from CLI
@@ -234,6 +240,8 @@ npx vercel
 | `npm run build` | Production build |
 | `npm start` | Start production server |
 | `npm run lint` | Run ESLint |
+| `npm run payload` | Run Payload CLI commands |
+| `npm run generate:importmap` | Regenerate Payload admin import map |
 
 ---
 
