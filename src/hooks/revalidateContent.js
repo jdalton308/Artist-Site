@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 export function revalidateContent(paths) {
   return () => {
     for (const path of paths) {
+      console.log(`Revalidating path: ${path}`);
       revalidatePath(path);
     }
   };

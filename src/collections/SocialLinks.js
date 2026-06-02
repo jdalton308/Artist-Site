@@ -1,3 +1,6 @@
+import { revalidateAllPages } from "../hooks/revalidateContent.js";
+
+
 /** @type {import('payload').CollectionConfig} */
 export const SocialLinks = {
   slug: "social-links",
@@ -6,6 +9,9 @@ export const SocialLinks = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateAllPages()],
   },
   fields: [
     {
